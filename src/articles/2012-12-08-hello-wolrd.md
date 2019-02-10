@@ -1,7 +1,10 @@
----
-title: Hello World!
-date: 12/08/2012
-tag: misc
+{
+    "title": "Hello World!",
+    "slug": "hello-world",
+    "author": "Jeff Boek",
+    "date": "12/08/2012",
+    "tags": ["misc"]
+}
 
 It's about time... 
 
@@ -14,4 +17,4 @@ The whole point to this is to have a home for my domain(s), and a place for me t
 I decided to build it using [toto](http://cloudhead.io/toto), a very minimalist blog engine built on top of Rack.
 The ability to write all my posts in my favorite editor in Markdown and store them in .txt files intrigued me, and I have to say its quite enjoyable.
 
-It's time for me to go now, you can follow my journies here on the blog, or using [twitter](http://twitter.com/jeffboek).
+It's time for me to go now, you can follow my journeys here on the blog, or using [twitter](http://twitter.com/jeffboek).

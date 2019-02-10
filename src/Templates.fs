@@ -11,12 +11,20 @@ let layout viewModel =
     <!doctype html>
     <html>
       <head>
-        <link rel="stylesheet" type="text/css" href="/css/main.css">
+        <link rel="stylesheet" type="text/css" href="/main.css">
         <link rel="alternate" type="application/atom+xml" title="%s - feed" href="/index.xml" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
         <title>%s</title>
       </head>
-      <body> 
+      <body>
+        <header class="cf">
+          <h3><a href="/">Jeff Boek</a></h3>
+          <nav>
+            <!--<a href="/about/">About</a> |-->
+            <a href="/archives">Archives</a> |
+            <a href="http://twitter.com/jeffboek">Twitter</a>
+          </nav>
+        </header> 
         <section>
           %s
         </section>
@@ -52,4 +60,22 @@ let index =
     template
 
 
+type PostViewModel = { Title : string; Date : string; Content : string }
+let article viewModel =
+    let template = sprintf """
+    <article class="post">
+      <header>
+        <h1>%s</h1>
+        <span class="date">%s</span>
+      </header>
 
+      <section class="content">
+        %s
+      </section>      
+    </article>
+    """
+    
+    layout {
+        Title = viewModel.Title
+        Content = (template viewModel.Title viewModel.Date viewModel.Content)
+    }

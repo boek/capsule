@@ -7,22 +7,17 @@ open Suave.RequestErrors
 
 open Templates
 open Article
+open Article.FileSystemProvider
 
 let rootRoute = path "/"
 let articleRoute = pathScan "/article/%s" 
 let pageRoute = pathScan "/%s" 
 
 let renderArticle article =
-    let template = sprintf """
-    title: %s <br />
-    created at: %s <br />
-    body: %s <br />
-    """
-
-    template article.Title (article.Created.ToString()) article.Body
+    Templates.article { Title = article.Meta.Title ; Date = article.Meta.Date.ToString() ; Content = article.Body }
 
 let articleAction slug =
-    let response = findArticle (fileSystemArticleProvider "src/articles") slug
+    let response = findArticle (provider "src/articles") slug
                     |> Option.map renderArticle
                     |> Option.map OK
 
@@ -30,19 +25,26 @@ let articleAction slug =
 
 let app =
     choose [
-        GET >=> choose [
+        pathRegex @"/(.*)\.(css|png|gif|jpg|js|map|ico|svg)" >=> Files.browseHome
+        GET >=> choose [            
             rootRoute >=> OK(layout({ Title = "Hello World!"; Content = index }))
-            articleRoute articleAction
-            pageRoute ((sprintf "Page: %s") >> OK)
-        ] 
-        path ""
+            articleRoute articleAction            
+        ]         
         NOT_FOUND "404"
     ]
+
+open System.IO
+let myHomeFolder = Path.Combine(Directory.GetCurrentDirectory(), "src", "static")
+
 
 [<EntryPoint>]
 let main argv =
     let binding = HttpBinding.createSimple HTTP "0.0.0.0" 8081
-    let config = { defaultConfig with bindings = [ binding ] }
+    printfn "%s" myHomeFolder
+    let config = { defaultConfig with
+                    bindings = [ binding ]
+                    homeFolder = Some myHomeFolder
+                 }
     startWebServer config app
 
     0 // return an integer exit code
