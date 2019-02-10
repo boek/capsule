@@ -1,5 +1,11 @@
 module Article
+
+
 open System.Text.RegularExpressions
+let (|Regex|_|) pattern input =
+    let m = Regex.Match(input, pattern)
+    if m.Success then Some(List.tail [ for g in m.Groups -> g.Value ])
+    else None
 
 type Meta = { 
     Title : string
@@ -8,55 +14,54 @@ type Meta = {
     Date : System.DateTime
     Tags : string list
 }
+
 module Meta =
     open FSharp.Data
 
     type MetaParser = JsonProvider<"""
     {
-        "title": "Hello World!",
-        "slug": "foo",
-        "author": "Jeff Boek",
+        "title": "Title",
+        "slug": "Slug",
+        "author": "Author",
         "date": "12/08/2012",
-        "tags": ["misc"]
+        "tags": ["tag"]
     }
      """>
 
-    let parse input =
-        let value = MetaParser.Parse input
-        { Title = value.Title;
-            Author = value.Author;
-            Date = value.Date;
-            Slug = value.Slug;
-            Tags = (value.Tags |> Array.toList) }
+    let transformToMeta (meta : MetaParser.Root) = { Title = meta.Title;
+            Author = meta.Author;
+            Date = meta.Date;
+            Slug = meta.Slug;
+            Tags = (meta.Tags |> Array.toList) }  
 
+    
+    let parse =  MetaParser.Parse >> transformToMeta        
 
-let (|Regex|_|) pattern input =
-    let m = Regex.Match(input, pattern)
-    if m.Success then Some(List.tail [ for g in m.Groups -> g.Value ])
-    else None
 
 type Article = { 
     Meta : Meta
     Body : string
 }
+module Article =
+    let parse (input : string) =        
+        match input.Split("\n\n") with    
+        | [|meta; body|] -> Some({ Meta = Meta.parse meta; Body = body.ToString() })
+        | _ -> None
 
 type ArticleProvider = unit -> Article list
 type ArticleParser = string -> Article option
 
-
-module FileSystemProvider =
-    open System
+module FileSystemProvider =    
     open System.IO
+    open Article
 
-    let parse path = async {
-        return match (File.ReadAllText(path).Split("\n\n", 2)) with
-               | [|meta; body|] -> Some({ Meta = Meta.parse meta; Body = body.ToString() })
-               | _ -> None
+    let openFile path = async {
+        return File.ReadAllText(path)
     }
 
     let provider articlesDirectory () =
         Directory.GetFiles articlesDirectory
-        |> Seq.map parse        
+        |> Seq.map (openFile >> Async.map parse)
         |> Async.Parallel
         |> Async.RunSynchronously
         |> Seq.toList
