@@ -11,6 +11,8 @@ type Article = {
 }
 
 type ArticleProvider = unit -> Article list
+type ArticleParser = string -> Article option
+
 
 let parseFileToArticle path = async {
     let content = File.ReadAllText(path)     

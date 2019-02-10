@@ -5,6 +5,7 @@ open Suave.Successful
 open Suave.Operators
 open Suave.RequestErrors
 
+open Templates
 open Article
 
 let rootRoute = path "/"
@@ -30,7 +31,7 @@ let articleAction slug =
 let app =
     choose [
         GET >=> choose [
-            rootRoute >=> OK "/"
+            rootRoute >=> OK(layout({ Title = "Hello World!"; Content = index }))
             articleRoute articleAction
             pageRoute ((sprintf "Page: %s") >> OK)
         ] 

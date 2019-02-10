@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Templates.fs" />
     <Compile Include="Article.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
