@@ -22,7 +22,6 @@ module Actions =
     let articleAction articleFinder slug =
         articleFinder slug
         |> Option.map (mapArticleToViewModel >> Templates.article)
-        |> Option.map OK
         |> Option.orDefault (fun () -> NOT_FOUND "404")
 
 
@@ -30,7 +29,7 @@ let app articleFinder =
     choose [
         pathRegex @"/(.*)\.(css|png|gif|jpg|js|map|ico|svg)" >=> Files.browseHome
         GET >=> choose [
-            Routes.rootRoute >=> OK(layout({ Title = "Hello World!"; Content = index }))
+            Routes.rootRoute >=> index
             Routes.articleRoute (Actions.articleAction articleFinder)
         ]
         NOT_FOUND "404"

@@ -43,8 +43,8 @@ type Article = {
 
 module Article =
     let parse (input : string) =
-        match input.Split("\n\n") with
-        | [|meta; body|] -> Some({ Meta = Meta.parse meta; Body = body.ToString() })
+        match input.Split("\n\n", 2) with
+        | [|meta; body|] -> Some({ Meta = Meta.parse meta; Body = body })
         | _ -> None
 
 module FileSystemProvider =
@@ -61,6 +61,7 @@ module FileSystemProvider =
         |> Async.Parallel
         |> Async.RunSynchronously
         |> Seq.toList
+        |> (fun x -> printfn "%A" x; x)
         |> Seq.choose id
 
 let findArticle provider slug =

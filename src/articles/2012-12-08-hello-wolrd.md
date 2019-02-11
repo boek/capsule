@@ -6,7 +6,7 @@
     "tags": ["misc"]
 }
 
-It's about time... 
+It's about time...
 
 After three long days of trial and error I finally understand some of the in's and out's of Ruby and Linux.
 I have to say its quite satisfying using the command line to get into what I previously thought was the nitty-gritty of computing.

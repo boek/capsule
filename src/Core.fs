@@ -13,5 +13,5 @@ module Config =
     let defaultConfig = {
         StaticDir = None
         Host = Host "0.0.0.0"
-        Port = Port 1001
+        Port = Port 8081
     }
