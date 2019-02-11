@@ -7,7 +7,7 @@ let (|Regex|_|) pattern input =
     if m.Success then Some(List.tail [ for g in m.Groups -> g.Value ])
     else None
 
-type Meta = { 
+type Meta = {
     Title : string
     Author : string
     Slug : string
@@ -32,26 +32,23 @@ module Meta =
             Author = meta.Author;
             Date = meta.Date;
             Slug = meta.Slug;
-            Tags = (meta.Tags |> Array.toList) }  
-
-    
-    let parse =  MetaParser.Parse >> transformToMeta        
+            Tags = (meta.Tags |> Array.toList) }
 
 
-type Article = { 
+    let parse =  MetaParser.Parse >> transformToMeta
+
+
+type Article = {
     Meta : Meta
     Body : string
 }
 module Article =
-    let parse (input : string) =        
-        match input.Split("\n\n") with    
+    let parse (input : string) =
+        match input.Split("\n\n") with
         | [|meta; body|] -> Some({ Meta = Meta.parse meta; Body = body.ToString() })
         | _ -> None
 
-type ArticleProvider = unit -> Article list
-type ArticleParser = string -> Article option
-
-module FileSystemProvider =    
+module FileSystemProvider =
     open System.IO
     open Article
 
@@ -69,4 +66,4 @@ module FileSystemProvider =
 
 let findArticle provider slug =
     provider() |> Seq.tryFind (fun a -> a.Meta.Slug = slug)
-    
+
