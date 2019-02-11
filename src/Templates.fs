@@ -1,16 +1,10 @@
 module Templates
+
 open Suave.DotLiquid
-open DotLiquid
 
+type ArticleBrief = { Title : string ; Date : string; Summary : string}
+type IndexViewModel = { Articles : ArticleBrief list }
+let index (model : IndexViewModel) = page "index.liquid" model
 
-type LayoutViewModel = {
-    title : string
-    content : string
-}
-
-setTemplatesDir "./src/templates"
-
-let index = page "index.liquid" None
-
-type PostViewModel = { Title : string; Date : string; Content : string }
-let article (model : PostViewModel) = page "article.liquid" model
+type ArticleViewModel = { Title : string; Date : string; Content : string }
+let article (model : ArticleViewModel) = page "article.liquid" model

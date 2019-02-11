@@ -61,7 +61,6 @@ module FileSystemProvider =
         |> Async.Parallel
         |> Async.RunSynchronously
         |> Seq.toList
-        |> (fun x -> printfn "%A" x; x)
         |> Seq.choose id
 
 let findArticle provider slug =
