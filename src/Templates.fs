@@ -10,7 +10,9 @@ type LayoutViewModel = {
 
 setTemplatesDir "./src/templates"
 
+type ArticleBrief = { Title : string ; Date : string; Summary : string}
+type IndexViewModel = { Articles : ArticleBrief list }
 let index = page "index.liquid" None
 
-type PostViewModel = { Title : string; Date : string; Content : string }
-let article (model : PostViewModel) = page "article.liquid" model
+type ArticleViewModel = { Title : string; Date : string; Content : string }
+let article (model : ArticleViewModel) = page "article.liquid" model
