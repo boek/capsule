@@ -6,6 +6,7 @@ open Suave.Successful
 open Suave.Operators
 open Suave.RequestErrors
 
+open Core
 open Article
 open Templates
 
@@ -35,10 +36,12 @@ let app articleFinder =
         NOT_FOUND "404"
     ]
 
-let start homeFolder app =
-    let binding = HttpBinding.createSimple HTTP "0.0.0.0" 8081
+let start config app =
+    let (Host host, Port port) = (config.Host, config.Port)
+    let binding = HttpBinding.createSimple HTTP host port
     let config = { defaultConfig with
                     bindings = [ binding ]
-                    homeFolder = Some homeFolder
+                    homeFolder = config.StaticDir
                  }
+
     startWebServer config app

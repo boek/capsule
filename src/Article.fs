@@ -1,6 +1,5 @@
 module Article
 
-
 open System.Text.RegularExpressions
 let (|Regex|_|) pattern input =
     let m = Regex.Match(input, pattern)
@@ -37,11 +36,11 @@ module Meta =
 
     let parse =  MetaParser.Parse >> transformToMeta
 
-
 type Article = {
     Meta : Meta
     Body : string
 }
+
 module Article =
     let parse (input : string) =
         match input.Split("\n\n") with
