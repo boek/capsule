@@ -1,11 +1,14 @@
-module ArticleTests
+module DomainTests
 
-open Article
-open Xunit
 open System
+open Domain
+open Domain.Article
+open Domain.File
+open Xunit
 
 [<Fact>]
 let ``Test that we can parse an article`` () =
+    Assert.True(true)
     let mockFile = String.concat("\n") <| [
         "{"
         """"title": "Title","""
@@ -32,5 +35,5 @@ let ``Test that we can parse an article`` () =
         }
         Body = "Hello World!\nHello World!\n\n\nHello World!" }
 
-    let actual = mockFile |> Article.parse
+    let actual = { FileName = "Test" ; Body = mockFile } |> FileParser.parse
     Assert.True(actual.Value = expected)

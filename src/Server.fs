@@ -6,8 +6,7 @@ open Suave.Operators
 open Suave.RequestErrors
 open Suave.DotLiquid
 
-open Core
-open Article
+open Domain.Article
 open Templates
 
 let mapArticleToViewModel article =
@@ -43,14 +42,13 @@ let app (articleDatasource : ArticleDatasource) articleFetcher =
         NOT_FOUND "404"
     ]
 
-let start config app =
-    let (Host host, Port port) = (config.Host, config.Port)
-    let binding = HttpBinding.createSimple HTTP host port
+let start homeFolder app =
+    let binding = HttpBinding.createSimple HTTP "0.0.0.0" 8088
     setTemplatesDir "./src/templates"
 
     let config = { defaultConfig with
                     bindings = [ binding ]
-                    homeFolder = config.StaticDir
+                    homeFolder = Some homeFolder
                  }
 
     startWebServer config app
