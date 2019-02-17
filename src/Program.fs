@@ -2,11 +2,15 @@
 
 open Domain
 open Server
+open MarkdownSharp
+open MarkdownSharp
 
 [<EntryPoint>]
 let main _ =
+    let markdown = Markdown()
     let articlesDatasource = FileDatasource.listFilesAsync "src/articles"
     let repository = ArticleRepository.all articlesDatasource FileParser.parse
+                        |> Async.map (Seq.map (fun x -> { x with Body = markdown.Transform x.Body }))
     let fromSlug slug = async {
         let! repository = repository
         return repository
