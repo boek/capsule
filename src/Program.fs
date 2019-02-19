@@ -1,28 +1,37 @@
 ﻿open System.IO
 
+open MarkdownSharp
+open Suave
+open Suave.DotLiquid
+
+open Api
 open Domain
-open Server
-open MarkdownSharp
-open MarkdownSharp
+open Repository
+
 
 [<EntryPoint>]
 let main _ =
     let markdown = Markdown()
-    let articlesDatasource = FileDatasource.listFilesAsync "src/articles"
-    let repository = ArticleRepository.all articlesDatasource FileParser.parse
-                        |> Async.map (Seq.map (fun x -> { x with Body = markdown.Transform x.Body }))
-    let fromSlug slug = async {
-        let! repository = repository
-        return repository
-               |> Seq.tryFind (fun x -> x.Meta.Slug = slug)
-    }
+    let app =
+        FileDatasource.listFilesAsync "src/articles"
+        |> Async.map (Seq.map FileParser.parse
+                        >> Seq.choose id
+                        >> Seq.map (fun x -> { x with Body = markdown.Transform x.Body }))
+        |> Async.map FileRepository.create
+        |> Async.map api
+        |> Async.RunSynchronously
 
     let staticDir = Path.Combine
                         (Directory.GetCurrentDirectory(), "src", "static")
 
-    let articleSource () = repository |> Async.RunSynchronously
-    let articleFetcher slug = fromSlug slug |> Async.RunSynchronously
+    let binding = HttpBinding.createSimple HTTP "0.0.0.0" 8088
+    setTemplatesDir "./src/templates"
 
-    start staticDir (app articleSource articleFetcher)
+    let config = { defaultConfig with
+                    bindings = [ binding ]
+                    homeFolder = Some staticDir
+                 }
+
+    startWebServer config app
 
     0 // return an integer exit code

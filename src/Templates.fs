@@ -4,6 +4,9 @@ open Suave.DotLiquid
 
 type ArticleBrief = { Title : string ; Date : string; Summary : string}
 type IndexViewModel = { Articles : ArticleBrief list }
+module IndexViewModel =
+    let create list = { Articles = list }
+
 let index (model : IndexViewModel) = page "index.liquid" model
 
 type ArticleViewModel = { Title : string; Date : string; Content : string }

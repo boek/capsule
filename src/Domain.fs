@@ -84,11 +84,3 @@ module FileDatasource =
         |> Async.Parallel
         |> Async.map Array.toSeq
     }
-
-module ArticleRepository =
-    open File
-    open FileDatasource
-    open Article
-
-    let all (datasource : Async<seq<File>>) (parser : File -> Article option) =
-        datasource |> Async.map ((Seq.map parser) >> (Seq.choose id))
