@@ -1,14 +1,14 @@
 module Domain
 
 module Config =
-    type Port = Port of int
-    type Host = Host of string
 
     type Config = {
         StaticDir : string option
         Host : Host
         Port : Port
     }
+    and Host = Host of string
+    and Port = Port of int
 
     let defaultConfig = {
         StaticDir = None
